@@ -3,16 +3,25 @@ using NuGet.Frameworks;
 
 namespace JornadaMilhas.Test
 {
-    public class OfertaViagemTeste
+    public class OfertaViagemConstrutor
     {
-        [Fact]
-        public void TestandoOfertaValida()
+        [Theory]
+        [InlineData("",null,"2024-01-01","2024-01-02",0,false)]
+        [InlineData("OrigemTeste", "DestinoTeste", "2024-01-11", "2024-01-12", 100,true)]
+        [InlineData(null, "São Paulo", "2024-01-11", "2024-01-12", -1,false)]
+        [InlineData(null, "Belo Horizonte", "2024-01-11", "2024-01-12", 0, false)]
+        [InlineData(null, "Vitória", "2024-01-11", "2024-01-12", -500, false)]
+        public void RetornaEhValidoDeAcordoComDadosDeEntrada(
+            string origem,
+            string destino, 
+            DateTime dataIda, 
+            DateTime dataVolta, 
+            double preco,
+            bool validacao)
         {
             //cenário - arrange
-            Rota rota = new("OrigemTeste","DestinoTeste");
-            Periodo periodo = new(DateTime.Now.AddDays(-20), DateTime.Now.AddDays(2));
-            double preco = 100.0;
-            var validacao = true;
+            Rota rota = new(origem,destino);
+            Periodo periodo = new(dataIda,dataVolta);
             
             //ação - act
             OfertaViagem oferta = new(rota, periodo, preco);
@@ -22,7 +31,7 @@ namespace JornadaMilhas.Test
         }
 
         [Fact]
-        public void TestandoOfertaComRotaNula()
+        public void RetornaMensagemDeErroDeRotaEPeriodoInvalidoQuandoRotaNula()
         {
             Rota rota = null;
             Periodo periodo = new(DateTime.Now.AddDays(-20), DateTime.Now.AddDays(2));
@@ -35,7 +44,7 @@ namespace JornadaMilhas.Test
         }
 
         [Fact]
-        public void TestandoPrecoNegativo()
+        public void RetornaMensagemDeErroDePrecoInvalidoQuandoPrecoMenorQueZero()
         {
             //cenário - arrange
             Rota rota = new("OrigemTeste", "DestinoTeste");
